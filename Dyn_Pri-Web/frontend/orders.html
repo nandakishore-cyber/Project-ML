@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Order History - DynPrice</title>
+  
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/pages/orders.css">
+</head>
+<body class="page-offset">
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="container navbar-container">
+      <a href="index.html" class="navbar-brand">DynPrice</a>
+      
+      <ul class="navbar-nav desktop-only">
+        <li><a href="products.html" class="nav-link">All Products</a></li>
+      </ul>
+
+      <div class="navbar-actions">
+        <!-- We can add a logout button here for convenience since it's a user dashboard page -->
+        <button class="btn btn-outline" style="padding: 4px 12px; font-size:12px;" onclick="logout()">Logout</button>
+        <a href="cart.html" class="navbar-icon-btn">
+          🛒
+          <span class="cart-badge" id="cart-badge-count">0</span>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container" style="padding-top: 32px;">
+    
+    <div class="orders-layout">
+      <h1 class="page-title" style="margin-bottom: 24px; font-size:28px; color:var(--color-navy);">Order History</h1>
+
+      <div id="orders-list">
+        <div style="text-align:center; padding: 60px 0;"><span class="spinner spinner-large"></span></div>
+      </div>
+    </div>
+
+  </main>
+
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/orders.js"></script>
+  <script>
+    if (!isLoggedIn()) {
+      window.location.href = 'login.html';
+    }
+    
+    document.addEventListener('DOMContentLoaded', () => {
+      initOrdersPage();
+    });
+  </script>
+</body>
+</html>

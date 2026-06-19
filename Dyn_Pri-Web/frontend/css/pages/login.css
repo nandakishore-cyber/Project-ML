@@ -1,0 +1,86 @@
+/* frontend/css/pages/login.css */
+
+.auth-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background-color: var(--bg-page);
+  padding: 16px;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 400px;
+  background-color: var(--bg-card);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+}
+
+.auth-header {
+  text-align: center;
+  padding: 32px 24px 24px;
+}
+
+.auth-header h1 {
+  font-size: 24px;
+  color: var(--color-navy);
+  margin-bottom: 8px;
+}
+
+.auth-header p {
+  color: var(--color-muted);
+  font-size: 14px;
+}
+
+.tab-switcher {
+  display: flex;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.tab-btn {
+  flex: 1;
+  padding: 16px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-muted);
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tab-btn:hover {
+  color: var(--color-text);
+  background-color: var(--bg-page);
+}
+
+.tab-btn.active {
+  color: var(--color-primary);
+  border-bottom-color: var(--color-primary);
+}
+
+.auth-body {
+  padding: 24px;
+}
+
+.auth-form {
+  display: none;
+}
+
+.auth-form.active {
+  display: block;
+}
+
+.global-error {
+  background-color: #fee2e2;
+  color: var(--color-danger);
+  padding: 12px;
+  border-radius: var(--radius-btn);
+  font-size: 13px;
+  margin-bottom: 16px;
+  display: none;
+  border: 1px solid #fecaca;
+}

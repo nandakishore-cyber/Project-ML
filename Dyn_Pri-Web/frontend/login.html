@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - DynPrice</title>
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/pages/login.css">
+</head>
+<body class="auth-page">
+
+  <main class="auth-card">
+    <div class="auth-header">
+      <h1>DynPrice</h1>
+      <p>Welcome back! Please enter your details.</p>
+    </div>
+
+    <div class="tab-switcher">
+      <button class="tab-btn active" id="tab-login" onclick="switchTab('login')">Log In</button>
+      <button class="tab-btn" id="tab-signup" onclick="switchTab('signup')">Sign Up</button>
+    </div>
+
+    <div class="auth-body">
+      <!-- Login Form -->
+      <form id="form-login" class="auth-form active" onsubmit="handleLogin(event)">
+        <div id="login-error" class="global-error"></div>
+        
+        <div class="form-group">
+          <label class="form-label" for="login-email">Email</label>
+          <input type="email" id="login-email" class="form-input" placeholder="Enter your email" required>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label" for="login-password">Password</label>
+          <input type="password" id="login-password" class="form-input" placeholder="••••••••" required>
+        </div>
+        
+        <button type="submit" class="btn btn-primary btn-block" id="btn-login">
+          Sign In
+        </button>
+      </form>
+
+      <!-- Sign Up Form -->
+      <form id="form-signup" class="auth-form" onsubmit="handleSignup(event)">
+        <div id="signup-error" class="global-error"></div>
+
+        <div class="form-group">
+          <label class="form-label" for="signup-name">Full Name</label>
+          <input type="text" id="signup-name" class="form-input" placeholder="John Doe" required>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label" for="signup-email">Email</label>
+          <input type="email" id="signup-email" class="form-input" placeholder="Enter your email" required>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label" for="signup-password">Password</label>
+          <input type="password" id="signup-password" class="form-input" placeholder="Create a password" required minlength="6">
+        </div>
+        
+        <button type="submit" class="btn btn-primary btn-block" id="btn-signup">
+          Create Account
+        </button>
+      </form>
+    </div>
+  </main>
+
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script>
+    // Tab switching logic
+    function switchTab(tab) {
+      document.getElementById('tab-login').classList.remove('active');
+      document.getElementById('tab-signup').classList.remove('active');
+      
+      document.getElementById('form-login').classList.remove('active');
+      document.getElementById('form-signup').classList.remove('active');
+      
+      document.getElementById(`tab-${tab}`).classList.add('active');
+      document.getElementById(`form-${tab}`).classList.add('active');
+    }
+
+    // Set loading state on buttons
+    function setLoading(btnId, isLoading, text) {
+      const btn = document.getElementById(btnId);
+      if (isLoading) {
+        btn.innerHTML = `<span class="spinner" style="width:16px;height:16px;border-width:2px;border-top-color:#fff;"></span> Processing...`;
+        btn.classList.add('btn-disabled');
+      } else {
+        btn.innerHTML = text;
+        btn.classList.remove('btn-disabled');
+      }
+    }
+
+    function showError(errorId, message) {
+      const el = document.getElementById(errorId);
+      if (message) {
+        el.textContent = message;
+        el.style.display = 'block';
+      } else {
+        el.style.display = 'none';
+      }
+    }
+
+    async function handleLogin(e) {
+      e.preventDefault();
+      showError('login-error', null);
+      
+      const email = document.getElementById('login-email').value;
+      const pass = document.getElementById('login-password').value;
+      
+      setLoading('btn-login', true);
+      const res = await apiLogin(email, pass);
+      
+      if (res.success) {
+        saveToken(res.data.access_token);
+        // Try getting user profile info if provided, else dummy or fetch separately
+        // if API doesn't return user obj in login, we might need a separate call.
+        saveUser(res.data.user || { email, is_admin: res.data.is_admin || false }); 
+        
+        const redirect = localStorage.getItem('redirectUrl') || '/frontend/index.html';
+        localStorage.removeItem('redirectUrl');
+        window.location.href = redirect;
+      } else {
+        showError('login-error', res.error);
+        setLoading('btn-login', false, 'Sign In');
+      }
+    }
+
+    async function handleSignup(e) {
+      e.preventDefault();
+      showError('signup-error', null);
+      
+      const name = document.getElementById('signup-name').value;
+      const email = document.getElementById('signup-email').value;
+      const password = document.getElementById('signup-password').value;
+      
+      setLoading('btn-signup', true);
+      const res = await apiSignup({ name, email, password });
+      
+      if (res.success) {
+        // Auto-login after signup, or just switch to login tab
+        switchTab('login');
+        document.getElementById('login-email').value = email;
+        showError('login-error', 'Account created successfully! Please log in.');
+        document.getElementById('login-error').style.backgroundColor = '#dcfce7';
+        document.getElementById('login-error').style.color = 'var(--color-success)';
+        document.getElementById('login-error').style.borderColor = '#bbf7d0';
+      } else {
+        showError('signup-error', res.error);
+      }
+      setLoading('btn-signup', false, 'Create Account');
+    }
+
+    // Auto redirect if already logged in
+    window.addEventListener('DOMContentLoaded', () => {
+      if (isLoggedIn()) {
+        window.location.href = '/frontend/index.html';
+      }
+    });
+  </script>
+</body>
+</html>

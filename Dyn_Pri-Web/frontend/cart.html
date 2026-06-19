@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your Cart - DynPrice</title>
+  
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/pages/cart.css">
+</head>
+<body class="page-offset">
+
+  <!-- Navbar Component -->
+  <nav class="navbar">
+    <div class="container navbar-container">
+      <a href="index.html" class="navbar-brand">DynPrice</a>
+      
+      <ul class="navbar-nav desktop-only">
+        <li><a href="products.html" class="nav-link">All Products</a></li>
+        <li><a href="products.html?category=Laptops" class="nav-link">Laptops</a></li>
+        <li><a href="products.html?category=Phones" class="nav-link">Phones</a></li>
+      </ul>
+
+      <div class="navbar-actions">
+        <a href="orders.html" id="nav-user-btn" class="navbar-icon-btn">👤</a>
+        <a href="cart.html" class="navbar-icon-btn" style="color:var(--color-primary);">
+          🛒
+          <span class="cart-badge" id="cart-badge-count">0</span>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container" style="padding-top: 32px;">
+    
+    <h1 class="page-title">My Cart</h1>
+
+    <div id="cart-loading">
+      <div style="text-align: center; padding: 60px 0;">
+        <span class="spinner spinner-large"></span>
+        <p class="mt-4 text-muted">Fetching live prices...</p>
+      </div>
+    </div>
+
+    <div id="cart-empty" style="display: none;">
+      <div class="empty-state">
+        <h3 style="margin-bottom: 8px;">Your cart is empty</h3>
+        <p style="margin-bottom: 24px;">Looks like you haven't added anything to your cart yet.</p>
+        <a href="products.html" class="btn btn-primary">Start Shopping</a>
+      </div>
+    </div>
+
+    <!-- Will be shown if items exist -->
+    <div class="cart-layout" id="cart-content" style="display: none;">
+      
+      <div class="cart-main">
+        <div class="cart-items-list" id="cart-items-list">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <aside class="cart-summary">
+        <h3 class="summary-title">Order Summary</h3>
+        
+        <div class="summary-row">
+          <span>Subtotal (<span id="summary-items-count">0</span> items)</span>
+          <span id="summary-subtotal">₹0</span>
+        </div>
+        
+        <div class="summary-row">
+          <span>Estimated Tax</span>
+          <span id="summary-tax">₹0</span>
+        </div>
+
+        <div class="summary-row total">
+          <span>Total</span>
+          <span id="summary-total">₹0</span>
+        </div>
+
+        <div class="dynamic-pricing-note">
+          <span style="font-size:16px;">⚡</span>
+          <span>Prices update dynamically based on live market demand. Checkout quickly to lock in your price!</span>
+        </div>
+
+        <button class="btn btn-primary btn-block" onclick="window.location.href='checkout.html'">
+          Proceed to Checkout
+        </button>
+      </aside>
+
+    </div>
+  </main>
+
+  <div id="toast-container" class="toast-container"></div>
+
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/cart.js"></script>
+  <script>
+    if (!isLoggedIn()) {
+      window.location.href = 'login.html';
+    }
+    
+    document.addEventListener('DOMContentLoaded', () => {
+      initCartPage();
+    });
+  </script>
+</body>
+</html>

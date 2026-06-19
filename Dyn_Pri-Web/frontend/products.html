@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Products - DynPrice</title>
+  
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/pages/products.css">
+</head>
+<body class="page-offset">
+
+  <!-- Navbar Component -->
+  <nav class="navbar">
+    <div class="container navbar-container">
+      <a href="index.html" class="navbar-brand">DynPrice</a>
+      
+      <ul class="navbar-nav desktop-only">
+        <li><a href="products.html" class="nav-link active">All Products</a></li>
+        <li><a href="products.html?category=Laptops" class="nav-link">Laptops</a></li>
+        <li><a href="products.html?category=Phones" class="nav-link">Phones</a></li>
+      </ul>
+
+      <div class="navbar-actions">
+        <a href="orders.html" id="nav-user-btn" class="navbar-icon-btn">👤</a>
+        <a href="cart.html" class="navbar-icon-btn">
+          🛒
+          <span class="cart-badge" id="cart-badge-count">0</span>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container" style="padding-top: 24px; padding-bottom: 60px;">
+    
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb">
+      <a href="index.html" class="breadcrumb-item">Home</a>
+      <span class="breadcrumb-separator">/</span>
+      <span class="breadcrumb-item breadcrumb-active">Electronics</span>
+    </nav>
+
+    <div class="products-layout">
+      <!-- Sidebar Filters -->
+      <aside class="products-sidebar">
+        <div class="filter-group">
+          <h3 class="filter-title">Categories</h3>
+          <label class="filter-checkbox"><input type="checkbox" name="category" value="Mobile Phones"> Mobile Phones</label>
+          <label class="filter-checkbox"><input type="checkbox" name="category" value="Laptops"> Laptops</label>
+          <label class="filter-checkbox"><input type="checkbox" name="category" value="TVs"> TVs</label>
+          <label class="filter-checkbox"><input type="checkbox" name="category" value="Earphones"> Earphones</label>
+          <label class="filter-checkbox"><input type="checkbox" name="category" value="Smartwatches"> Smartwatches</label>
+          <label class="filter-checkbox"><input type="checkbox" name="category" value="Cameras"> Cameras</label>
+        </div>
+
+        <div class="filter-group">
+          <h3 class="filter-title">Segment</h3>
+          <label class="filter-checkbox"><input type="checkbox" name="segment" value="Budget"> Budget</label>
+          <label class="filter-checkbox"><input type="checkbox" name="segment" value="Mid"> Mid-Range</label>
+          <label class="filter-checkbox"><input type="checkbox" name="segment" value="Premium"> Premium</label>
+        </div>
+
+        <div class="filter-group">
+          <h3 class="filter-title">Price Range</h3>
+          <div class="filter-range">
+            <div class="range-inputs">
+              <input type="number" id="price-min" placeholder="Min ₹" min="0">
+              <span>-</span>
+              <input type="number" id="price-max" placeholder="Max ₹" min="0">
+            </div>
+          </div>
+        </div>
+
+        <div class="filter-group">
+          <h3 class="filter-title">Minimum Rating</h3>
+          <div class="stars-filter">
+            <label><input type="radio" name="rating" value="4"> ★★★★☆ & up</label>
+            <label><input type="radio" name="rating" value="3"> ★★★☆☆ & up</label>
+            <label><input type="radio" name="rating" value="2"> ★★☆☆☆ & up</label>
+          </div>
+        </div>
+
+        <div class="filter-group" style="padding-top: 12px;">
+          <label class="filter-checkbox fw-medium">
+            <input type="checkbox" id="in-stock-only"> In Stock Only
+          </label>
+        </div>
+      </aside>
+
+      <!-- Main Content Area -->
+      <section class="products-main">
+        <div class="products-header">
+          <div class="products-title-area">
+            <h1 id="page-title">Electronics</h1>
+            <div class="products-count" id="products-count">Loading products...</div>
+          </div>
+          
+          <div class="products-sort">
+            <label for="sort-select">Sort by:</label>
+            <select id="sort-select">
+              <option value="recommended">Recommended</option>
+              <option value="price_asc">Price: Low to High</option>
+              <option value="price_desc">Price: High to Low</option>
+              <option value="rating_desc">Top Rated</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="products-grid" class="products-grid">
+          <!-- Populated by JS -->
+          <div style="grid-column: 1 / -1; text-align: center; padding: 40px;">
+            <span class="spinner spinner-large"></span>
+          </div>
+        </div>
+      </section>
+    </div>
+
+  </main>
+
+  <div id="toast-container" class="toast-container"></div>
+
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/products.js"></script>
+  <script>
+    // Navbar basic auth logic
+    if (!isLoggedIn()) {
+      document.getElementById('nav-user-btn').href = 'login.html';
+    }
+
+    async function loadCartCount() {
+      if (isLoggedIn()) {
+        const res = await apiGetCart();
+        if (res.success && res.data && res.data.items) {
+           const count = res.data.items.reduce((acc, item) => acc + item.quantity, 0);
+           document.getElementById('cart-badge-count').innerText = count;
+        }
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      initProductsPage();
+      loadCartCount();
+    });
+  </script>
+</body>
+</html>

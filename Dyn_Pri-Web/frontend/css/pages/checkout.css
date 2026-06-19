@@ -1,0 +1,142 @@
+/* frontend/css/pages/checkout.css */
+
+.checkout-layout {
+  display: flex;
+  gap: 32px;
+  align-items: flex-start;
+  margin-bottom: 60px;
+}
+
+/* Left: Address Form */
+.checkout-form-container {
+  flex: 1;
+  background-color: var(--bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  padding: 32px;
+  box-shadow: var(--shadow-card);
+}
+
+.checkout-form-container h2 {
+  font-size: 20px;
+  color: var(--color-navy);
+  margin-bottom: 24px;
+}
+
+.form-row {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.form-row > .form-group {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+/* Right: Order Summary */
+.checkout-summary {
+  width: 380px;
+  flex-shrink: 0;
+  background-color: var(--bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  padding: 24px;
+  box-shadow: var(--shadow-card);
+  position: sticky;
+  top: 88px;
+}
+
+.checkout-summary h3 {
+  font-size: 18px;
+  color: var(--color-navy);
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.summary-items-list {
+  max-height: 300px;
+  overflow-y: auto;
+  margin-bottom: 16px;
+  /* hide scrollbar */
+  -ms-overflow-style: none; scrollbar-width: none;
+}
+.summary-items-list::-webkit-scrollbar { display: none; }
+
+.summary-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.summary-item:last-child {
+  margin-bottom: 0;
+}
+
+.summary-item-img {
+  width: 48px;
+  height: 48px;
+  background-color: var(--bg-image);
+  border-radius: var(--radius-btn);
+  display: flex; align-items: center; justify-content: center;
+  padding: 4px;
+}
+.summary-item-img img {
+  max-width: 100%; max-height: 100%; object-fit: contain;
+}
+
+.summary-item-info {
+  flex: 1;
+}
+.summary-item-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-navy);
+  display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden;
+}
+.summary-item-meta {
+  font-size: 12px;
+  color: var(--color-muted);
+}
+.summary-item-price {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.payment-section {
+  margin-top: 24px;
+}
+
+.btn-razorpay {
+  background-color: #02042C; /* Razorpay branding color aprox */
+  color: white;
+  width: 100%;
+  font-size: 16px;
+  padding: 14px;
+}
+.btn-razorpay:hover {
+  background-color: #121544;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .checkout-layout {
+    flex-direction: column-reverse;
+  }
+  .checkout-summary {
+    width: 100%;
+    position: static;
+  }
+}
+
+@media (max-width: 480px) {
+  .form-row {
+    flex-direction: column;
+    gap: 0;
+  }
+  .form-row > .form-group {
+    margin-bottom: 16px;
+  }
+}

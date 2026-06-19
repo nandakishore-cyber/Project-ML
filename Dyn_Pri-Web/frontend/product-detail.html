@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product Details - DynPrice</title>
+  
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/pages/product-detail.css">
+</head>
+<body class="page-offset">
+
+  <!-- Navbar Component -->
+  <nav class="navbar">
+    <div class="container navbar-container">
+      <a href="index.html" class="navbar-brand">DynPrice</a>
+      
+      <ul class="navbar-nav desktop-only">
+        <li><a href="products.html" class="nav-link">All Products</a></li>
+        <li><a href="products.html?category=Laptops" class="nav-link">Laptops</a></li>
+        <li><a href="products.html?category=Phones" class="nav-link">Phones</a></li>
+      </ul>
+
+      <div class="navbar-actions">
+        <a href="orders.html" id="nav-user-btn" class="navbar-icon-btn">👤</a>
+        <a href="cart.html" class="navbar-icon-btn">
+          🛒
+          <span class="cart-badge" id="cart-badge-count">0</span>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container" style="padding-top: 24px;">
+
+    <!-- Dynamic skeleton or content container -->
+    <div id="product-container">
+      <div style="text-align: center; padding: 100px 0;">
+        <span class="spinner spinner-large"></span>
+        <p class="mt-4 text-muted">Loading product details...</p>
+      </div>
+    </div>
+
+  </main>
+
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- Template injected by JS -->
+  <template id="product-template">
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb">
+      <a href="index.html" class="breadcrumb-item">Home</a>
+      <span class="breadcrumb-separator">/</span>
+      <a href="products.html" class="breadcrumb-item">Electronics</a>
+      <span class="breadcrumb-separator">/</span>
+      <a href="products.html?category={CATEGORY}" class="breadcrumb-item" id="bc-category">{CATEGORY}</a>
+      <span class="breadcrumb-separator">/</span>
+      <span class="breadcrumb-item breadcrumb-active" id="bc-name">{NAME}</span>
+    </nav>
+
+    <div class="product-detail-layout mt-4">
+      <!-- Left Column -->
+      <div class="product-gallery">
+        <div class="thumbnail-strip" id="thumb-strip">
+          <!-- Dynamically populated -->
+        </div>
+        <div class="main-image-container">
+          <img src="" id="main-product-img" alt="Product Image">
+        </div>
+      </div>
+
+      <!-- Right Column -->
+      <div class="product-info">
+        <h1 class="product-title" id="p-title">{NAME}</h1>
+        
+        <div class="rating-row">
+          <div class="stars">★★★★☆ <span style="color:var(--color-star); font-weight:500;" id="p-rating">4.5</span></div>
+          <span class="rating-count"><span id="p-reviews">120</span> Reviews</span>
+          <span class="text-muted">•</span>
+          <span class="orders-count"><span id="p-orders">450</span>+ orders</span>
+        </div>
+
+        <div class="feature-list" id="p-features">
+          <!-- Populated by JS -->
+        </div>
+
+        <div class="price-block">
+          <div class="d-flex align-center">
+            <span class="current-price" id="p-price">₹0</span>
+            <span class="price-unit">/unit</span>
+            <span class="old-price" id="p-old-price">₹0</span>
+          </div>
+          <div class="ai-badge" title="Updated based on live demand & market data">
+            ✨ AI-Optimised Price
+          </div>
+          <div id="p-price-updated" style="font-size:12px; color:var(--color-muted); margin-top:8px; display:none;"></div>
+        </div>
+
+        <div class="qty-actions-row">
+          <div class="qty-stepper">
+            <button class="qty-btn" onclick="updateQuantity(-1)">−</button>
+            <input type="number" class="qty-input" id="qty-input" value="1" min="1">
+            <button class="qty-btn" onclick="updateQuantity(1)">+</button>
+          </div>
+          <button class="btn btn-primary btn-add-cart" id="btn-add-cart" onclick="handleAddToCart()">
+            🛒 Add to cart
+          </button>
+          <button class="btn btn-outline btn-wishlist">♡</button>
+        </div>
+
+        <label class="compare-row">
+          <input type="checkbox" style="accent-color:var(--color-primary)"> Add to compare
+        </label>
+
+        <div class="divider"></div>
+
+        <div class="shipping-card">
+          <h4>Shipping & Returns</h4>
+          <p>🚚 Free standard delivery on orders over ₹5,000</p>
+          <p>📦 Ships within 24 hours</p>
+          <p>↩️ 7-day return policy</p>
+        </div>
+        <div class="purchase-protection">
+          🛡️ 100% Purchase Protection
+        </div>
+      </div>
+    </div>
+
+    <!-- Below Fold -->
+    <div class="details-section">
+      <h2 class="details-title">Detailed Information</h2>
+      <!-- Specs Table -->
+      <table class="specs-table" id="specs-table">
+        <tbody>
+          <!-- Populated by JS -->
+        </tbody>
+      </table>
+    </div>
+
+    <div class="details-section">
+      <h2 class="details-title">Recent Reviews</h2>
+      <div class="review-grid" id="review-grid">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+  </template>
+
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/product-detail.js"></script>
+  <script>
+    if (!isLoggedIn()) {
+      document.getElementById('nav-user-btn').href = 'login.html';
+    }
+
+    async function loadCartCount() {
+      if (isLoggedIn()) {
+        const res = await apiGetCart();
+        if (res.success && res.data && res.data.items) {
+           const count = res.data.items.reduce((acc, item) => acc + item.quantity, 0);
+           document.getElementById('cart-badge-count').innerText = count;
+        }
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      initProductDetailPage();
+      loadCartCount();
+    });
+  </script>
+</body>
+</html>

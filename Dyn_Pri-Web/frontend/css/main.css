@@ -1,0 +1,108 @@
+/* frontend/css/main.css - Global Variables & Reset */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
+
+:root {
+  --bg-page:        #F0F2F5;
+  --bg-card:        #FFFFFF;
+  --bg-image:       #F5F6F8;
+  --color-primary:  #2B6BE6;
+  --color-primary-hover: #1f50b5;
+  --color-navy:     #1A1A2E;
+  --color-text:     #1A1A2E;
+  --color-muted:    #6B7280;
+  --color-border:   #E5E7EB;
+  --color-strike:   #9CA3AF;
+  --color-star:     #F59E0B;
+  --color-success:  #16A34A;
+  --color-warning:  #D97706;
+  --color-danger:   #DC2626;
+  --radius-card:    12px;
+  --radius-btn:     8px;
+  --shadow-card:    0 1px 3px rgba(0,0,0,0.08);
+  --shadow-hover:   0 4px 12px rgba(0,0,0,0.12);
+  --font:           'Inter', sans-serif;
+  --max-width:      1280px;
+}
+
+/* Global Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  font-family: var(--font);
+  background-color: var(--bg-page);
+  color: var(--color-text);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  flex: 1; /* allow main to take up space between header/footer */
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+  transition: color 0.2s ease;
+}
+
+a:hover {
+  color: var(--color-primary);
+}
+
+ul {
+  list-style: none;
+}
+
+button {
+  font-family: var(--font);
+  cursor: pointer;
+  border: none;
+  background: none;
+  transition: all 0.2s ease;
+}
+
+input, select, textarea {
+  font-family: var(--font);
+}
+
+/* Container */
+.container {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 16px;
+  width: 100%;
+}
+
+/* Utility Classes */
+.text-primary { color: var(--color-primary); }
+.text-navy { color: var(--color-navy); }
+.text-muted { color: var(--color-muted); }
+.text-success { color: var(--color-success); }
+.text-danger { color: var(--color-danger); }
+.text-warning { color: var(--color-warning); }
+
+.fw-bold { font-weight: 700; }
+.fw-medium { font-weight: 500; }
+.fw-regular { font-weight: 400; }
+
+.d-flex { display: flex; }
+.align-center { align-items: center; }
+.justify-between { justify-content: space-between; }
+.justify-center { justify-content: center; }
+.flex-column { flex-direction: column; }
+.gap-2 { gap: 8px; }
+.gap-3 { gap: 12px; }
+.gap-4 { gap: 16px; }
+
+.mt-2 { margin-top: 8px; }
+.mt-4 { margin-top: 16px; }
+.mb-2 { margin-bottom: 8px; }
+.mb-4 { margin-bottom: 16px; }

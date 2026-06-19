@@ -1,0 +1,118 @@
+/* frontend/css/pages/orders.css */
+
+.orders-layout {
+  max-width: 800px;
+  margin: 0 auto 60px;
+}
+
+.order-card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: var(--shadow-card);
+}
+
+.order-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 16px;
+  margin-bottom: 16px;
+}
+
+.order-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.order-id {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-navy);
+}
+
+.order-date {
+  font-size: 13px;
+  color: var(--color-muted);
+}
+
+.order-status {
+  padding: 6px 12px;
+  border-radius: 50px;
+  font-size: 13px;
+  font-weight: 600;
+}
+.status-completed { background-color: #dcfce7; color: var(--color-success); border: 1px solid #bbf7d0;}
+.status-pending { background-color: #fef3c7; color: var(--color-warning); border: 1px solid #fde68a;}
+.status-cancelled { background-color: #fee2e2; color: var(--color-danger); border: 1px solid #fecaca;}
+
+.order-items {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.order-item-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  color: var(--color-text);
+  align-items: center;
+}
+
+.order-item-name {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-right: 16px;
+}
+
+.order-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid var(--color-border);
+  padding-top: 16px;
+}
+
+.order-total-label {
+  font-size: 14px;
+  color: var(--color-muted);
+}
+
+.order-total-amount {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--color-navy);
+}
+
+.no-orders-state {
+  text-align: center;
+  padding: 60px 20px;
+  background-color: var(--bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+}
+.no-orders-state h3 {
+  font-size: 20px;
+  color: var(--color-navy);
+  margin-bottom: 8px;
+}
+.no-orders-state p {
+  color: var(--color-muted);
+  margin-bottom: 24px;
+}
+
+@media (max-width: 600px) {
+  .order-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+}
