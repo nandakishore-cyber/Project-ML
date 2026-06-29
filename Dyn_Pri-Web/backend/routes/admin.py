@@ -23,6 +23,7 @@ from models.category_specs.mobile import Mobile
 from models.category_specs.smartwatch import Smartwatch
 from models.category_specs.television import Television
 from models.order import Order
+from models.order_item import OrderItem
 from models.product import Product
 from models.user import User
 from schemas.order import OrderOut
@@ -49,6 +50,33 @@ _SPEC_MAP: dict[str, Any] = {
 VALID_CATEGORIES = frozenset(_SPEC_MAP.keys())
 
 
+from datetime import datetime
+
+def update_product_price(product, db: Session):
+    try:
+        from ml.pricing_service import predict_price, build_product_input
+        p_dict = {
+            "category":         product.category or "",
+            "sub_category":     product.sub_category or "",
+            "base_price":       float(product.base_price)       if product.base_price       else 0.0,
+            "competitor_price": float(product.competitor_price) if product.competitor_price else 0.0,
+            "demand":           product.demand   or 0,
+            "rating":           float(product.rating)           if product.rating           else 3.0,
+            "reviews":          product.reviews  or 0,
+            "stock":            product.stock    or 0,
+            "discount":         float(product.discount)         if product.discount         else 0.0,
+        }
+        enriched = build_product_input(p_dict)
+        pred = predict_price(enriched)
+        product.current_price = pred["new_price"]
+        product.last_price_update = datetime.now()
+    except Exception as exc:
+        import logging
+        logging.getLogger(__name__).warning(f"ML price prediction failed: {exc}")
+        product.current_price = product.base_price
+        product.last_price_update = datetime.now()
+
+
 # ---------------------------------------------------------------------------
 # ML pricing endpoints
 # ---------------------------------------------------------------------------
@@ -73,6 +101,53 @@ def trigger_pricing(
         raise HTTPException(status_code=503, detail=str(exc))
     except Exception as exc:
         raise HTTPException(status_code=500, detail=f"Pricing job error: {exc}")
+
+
+@router.post(
+    "/predict-price",
+    summary="Predict optimized price for given product parameters (without saving)",
+)
+def predict_price_endpoint(
+    body:  dict,
+    admin: User = Depends(get_admin_user),
+):
+    """
+    Run the ML model on any set of product parameters and return the
+    predicted optimal price. Does NOT save anything to the database.
+    Use this for the interactive Price Simulator on the admin dashboard.
+
+    Expected body fields:
+        category, sub_category, base_price, competitor_price,
+        demand, stock, rating, reviews, discount
+    """
+    try:
+        from ml.pricing_service import predict_price, build_product_input
+        enriched = build_product_input({
+            "category":         body.get("category", "Mobile Phone"),
+            "sub_category":     body.get("sub_category", "Budget"),
+            "base_price":       float(body.get("base_price", 0)),
+            "competitor_price": float(body.get("competitor_price", 0)),
+            "demand":           int(body.get("demand", 50)),
+            "stock":            int(body.get("stock", 100)),
+            "rating":           float(body.get("rating", 4.0)),
+            "reviews":          int(body.get("reviews", 100)),
+            "discount":         float(body.get("discount", 0)),
+        })
+        result = predict_price(enriched)
+        return {
+            "optimized_price":  result["new_price"],
+            "segment":          result["segment"],
+            "raw_prediction":   round(result["raw_prediction"], 2),
+            "price_cap":        round(result["price_cap"], 2),
+            "season_detected":  enriched["season"],
+            "day_detected":     enriched["day_of_week"],
+        }
+    except KeyError as exc:
+        raise HTTPException(status_code=422, detail=f"No ML model for this segment: {exc}")
+    except RuntimeError as exc:
+        raise HTTPException(status_code=503, detail=str(exc))
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"Prediction error: {exc}")
 
 
 @router.get(
@@ -145,6 +220,7 @@ def admin_create_product(
         season           = body.season,
         image_url        = body.image_url,
     )
+    update_product_price(product, db)
     db.add(product)
     db.flush()   # get product.id before committing
 
@@ -174,11 +250,18 @@ def admin_update_product(
     if not product:
         raise HTTPException(status_code=404, detail="Product not found")
 
-    for field, value in body.model_dump(exclude_unset=True).items():
+    updated_fields = body.model_dump(exclude_unset=True)
+    for field, value in updated_fields.items():
         setattr(product, field, value)
 
+    # Only re-run ML pricing if the admin did NOT explicitly set current_price.
+    # When admin uses the Price Simulator and clicks "Apply & Save", we respect
+    # their chosen price exactly — no re-prediction on top of it.
+    if "current_price" not in updated_fields:
+        update_product_price(product, db)
+
     db.commit()
-    return {"message": "Product updated successfully"}
+    return {"message": "Product updated successfully", "current_price": float(product.current_price)}
 
 
 @router.delete(
@@ -221,7 +304,7 @@ def admin_get_orders(
     """Return every order in the system, newest first."""
     return (
         db.query(Order)
-        .options(joinedload(Order.items))
+        .options(joinedload(Order.items).joinedload(OrderItem.product))
         .order_by(Order.created_at.desc())
         .all()
     )

@@ -111,9 +111,20 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
+        # Python http.server
         "http://localhost:5500",
         "http://127.0.0.1:5500",
+        "http://[::1]:5500",
+        # VS Code Live Server (auto-increments port)
+        "http://localhost:5501",
+        "http://127.0.0.1:5501",
+        "http://localhost:5502",
+        "http://127.0.0.1:5502",
+        "http://localhost:5503",
+        "http://127.0.0.1:5503",
+        # Other dev servers
         "http://localhost:3000",
+        "http://localhost:8080",
     ],
     allow_credentials = True,
     allow_methods     = ["*"],

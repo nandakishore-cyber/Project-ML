@@ -70,7 +70,7 @@ def _get_spec_dict(product: Product, db: Session) -> Optional[dict]:
 # Endpoints
 # ---------------------------------------------------------------------------
 @router.get(
-    "/",
+    "",
     response_model=list[ProductOut],
     summary="List all products",
 )

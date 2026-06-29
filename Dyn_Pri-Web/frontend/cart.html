@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="css/components.css">
   <link rel="stylesheet" href="css/pages/cart.css">
 </head>
-<body class="page-offset">
+<body class="page-cart page-offset">
 
   <!-- Navbar Component -->
   <nav class="navbar">
@@ -34,7 +34,21 @@
 
   <main class="container" style="padding-top: 32px;">
     
-    <h1 class="page-title">My Cart</h1>
+    <h1 class="page-title" style="margin-bottom: 24px;">My Cart</h1>
+
+    <div class="cart-tabs" style="display: flex; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 16px;">
+      <div class="cart-tab active" style="flex: 1; text-align: center; padding: 12px; color: #a5b4fc; font-weight: 700; border-bottom: 3px solid #8b5cf6; cursor: pointer;">
+        DynPrice Cart (<span id="tab-count">0</span>)
+      </div>
+      <div class="cart-tab" style="flex: 1; text-align: center; padding: 12px; font-weight: 600; color: #64748b; cursor: pointer;">
+        Saved Items (0)
+      </div>
+    </div>
+
+    <div class="delivery-box" style="display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.05); border-radius: 12px; padding: 16px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.08);">
+      <div style="font-size: 14px; color: #cbd5e1;">Deliver to: <span style="font-weight: 700; color: #f8fafc;">Coimbatore - 641031</span></div>
+      <button class="btn btn-outline" style="padding: 6px 14px; font-size: 13px;">Change</button>
+    </div>
 
     <div id="cart-loading">
       <div style="text-align: center; padding: 60px 0;">
@@ -47,47 +61,33 @@
       <div class="empty-state">
         <h3 style="margin-bottom: 8px;">Your cart is empty</h3>
         <p style="margin-bottom: 24px;">Looks like you haven't added anything to your cart yet.</p>
-        <a href="products.html" class="btn btn-primary">Start Shopping</a>
+        <a href="products.html" class="btn btn-primary" style="background: #2874f0; color: white;">Start Shopping</a>
       </div>
     </div>
 
     <!-- Will be shown if items exist -->
     <div class="cart-layout" id="cart-content" style="display: none;">
       
-      <div class="cart-main">
+      <div class="cart-main" style="width: 100%;">
         <div class="cart-items-list" id="cart-items-list">
           <!-- Populated by JS -->
         </div>
+        
+        <div class="cart-savings-banner" id="cart-savings-banner" style="display:none;">
+          % You'll save ₹<span id="savings-amount">0</span> on this order!
+        </div>
       </div>
+    </div>
 
-      <aside class="cart-summary">
-        <h3 class="summary-title">Order Summary</h3>
-        
-        <div class="summary-row">
-          <span>Subtotal (<span id="summary-items-count">0</span> items)</span>
-          <span id="summary-subtotal">₹0</span>
-        </div>
-        
-        <div class="summary-row">
-          <span>Estimated Tax</span>
-          <span id="summary-tax">₹0</span>
-        </div>
-
-        <div class="summary-row total">
-          <span>Total</span>
-          <span id="summary-total">₹0</span>
-        </div>
-
-        <div class="dynamic-pricing-note">
-          <span style="font-size:16px;">⚡</span>
-          <span>Prices update dynamically based on live market demand. Checkout quickly to lock in your price!</span>
-        </div>
-
-        <button class="btn btn-primary btn-block" onclick="window.location.href='checkout.html'">
-          Proceed to Checkout
-        </button>
-      </aside>
-
+    <!-- Sticky Footer -->
+    <div class="cart-sticky-footer" id="cart-sticky-footer" style="display: none;">
+      <div class="footer-price-info">
+        <div class="footer-total-label">Total to Pay</div>
+        <div id="sticky-new-total">₹0</div>
+      </div>
+      <button class="btn btn-checkout" onclick="window.location.href='checkout.html'">
+        Proceed to Checkout
+      </button>
     </div>
   </main>
 

@@ -20,10 +20,10 @@ An intelligent pricing platform that leverages XGBoost machine learning to autom
 
 | Name | Role |
 |------|------|
-| **Nanda Kishore K S** | UI/UX & Backend Developer |
-| **Mathesvaran J** | Full-Stack Developer & ML Integration |
+| **Nanda Kishore K S** |  Frontend Developer & ML Integration|
+| **Mathesvaran J** | Full-Stack Developer & Backend |
 | **Krishna Kumar E** | Machine Learning Engineer |
-| **Mohamed Apsal M** | Frontend Developer & UI/UX |
+| **Mohamed Apsal M** | UI/UX Web Designing |
 
 ---
 

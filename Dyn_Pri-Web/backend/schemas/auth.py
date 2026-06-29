@@ -2,6 +2,7 @@
 schemas/auth.py — Pydantic schemas for authentication endpoints.
 """
 
+from typing import Optional
 from pydantic import BaseModel, EmailStr, field_validator
 
 
@@ -28,6 +29,15 @@ class LoginRequest(BaseModel):
     password: str
 
 
+class UserInfo(BaseModel):
+    id: int
+    name: Optional[str] = None
+    email: EmailStr
+    is_admin: bool
+
+
 class TokenResponse(BaseModel):
     access_token: str
     token_type:   str = "bearer"
+    user:         Optional[UserInfo] = None
+    is_admin:     Optional[bool] = None

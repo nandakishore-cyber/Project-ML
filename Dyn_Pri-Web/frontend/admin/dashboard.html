@@ -66,7 +66,119 @@
         </div>
       </div>
 
-      <div class="panel">
+      <!-- ===== INTERACTIVE ML PRICE SIMULATOR ===== -->
+      <div class="panel" style="border-left: 4px solid #8b5cf6; background: linear-gradient(135deg, #1e1b4b 0%, #1a1a2e 100%); margin-top: 24px;">
+        <div class="panel-header" style="border-bottom: 1px solid rgba(139,92,246,0.3);">
+          <span style="color:#a5b4fc; font-weight:700; font-size:16px;">🧠 ML Price Simulator</span>
+          <span style="font-size:12px; color:#64748b; background:rgba(139,92,246,0.15); padding:4px 10px; border-radius:20px;">Real-time XGBoost Prediction</span>
+        </div>
+        <div class="panel-body">
+          <p style="color:#94a3b8; font-size:13px; margin-bottom:20px;">Adjust any product parameter below — the ML model predicts the <strong style="color:#a5b4fc;">optimized price instantly</strong> without saving.</p>
+
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:20px;">
+
+            <!-- Category -->
+            <div>
+              <label style="display:block; font-size:12px; color:#94a3b8; margin-bottom:6px; text-transform:uppercase; letter-spacing:0.5px;">Category</label>
+              <select id="sim-category" onchange="runSimulator()" style="width:100%; background:#0f172a; border:1px solid rgba(139,92,246,0.4); color:#e2e8f0; padding:10px; border-radius:8px; font-size:14px;">
+                <option value="Mobile Phone">Mobile Phone</option>
+                <option value="Laptop">Laptop</option>
+                <option value="Television">Television</option>
+                <option value="Earphones">Earphones</option>
+                <option value="Smartwatch">Smartwatch</option>
+                <option value="Camera">Camera</option>
+              </select>
+            </div>
+
+            <!-- Sub Category -->
+            <div>
+              <label style="display:block; font-size:12px; color:#94a3b8; margin-bottom:6px; text-transform:uppercase; letter-spacing:0.5px;">Segment</label>
+              <select id="sim-sub-category" onchange="runSimulator()" style="width:100%; background:#0f172a; border:1px solid rgba(139,92,246,0.4); color:#e2e8f0; padding:10px; border-radius:8px; font-size:14px;">
+                <option value="Budget">Budget</option>
+                <option value="Mid">Mid-Range</option>
+                <option value="Premium">Premium</option>
+              </select>
+            </div>
+
+            <!-- Base Price -->
+            <div>
+              <label style="display:block; font-size:12px; color:#94a3b8; margin-bottom:6px; text-transform:uppercase; letter-spacing:0.5px;">Base Price (₹) <span id="lbl-base" style="color:#a5b4fc; float:right;">50,000</span></label>
+              <input type="range" id="sim-base-price" min="500" max="300000" step="500" value="50000" oninput="document.getElementById('lbl-base').textContent=Number(this.value).toLocaleString(); runSimulator()"
+                style="width:100%; accent-color:#8b5cf6;">
+            </div>
+
+            <!-- Competitor Price -->
+            <div>
+              <label style="display:block; font-size:12px; color:#94a3b8; margin-bottom:6px; text-transform:uppercase; letter-spacing:0.5px;">Competitor Price (₹) <span id="lbl-comp" style="color:#a5b4fc; float:right;">49,000</span></label>
+              <input type="range" id="sim-competitor-price" min="500" max="300000" step="500" value="49000" oninput="document.getElementById('lbl-comp').textContent=Number(this.value).toLocaleString(); runSimulator()"
+                style="width:100%; accent-color:#8b5cf6;">
+            </div>
+
+            <!-- Demand -->
+            <div>
+              <label style="display:block; font-size:12px; color:#94a3b8; margin-bottom:6px; text-transform:uppercase; letter-spacing:0.5px;">Demand (units) <span id="lbl-demand" style="color:#a5b4fc; float:right;">85</span></label>
+              <input type="range" id="sim-demand" min="1" max="575" step="1" value="85" oninput="document.getElementById('lbl-demand').textContent=this.value; runSimulator()"
+                style="width:100%; accent-color:#8b5cf6;">
+            </div>
+
+            <!-- Stock -->
+            <div>
+              <label style="display:block; font-size:12px; color:#94a3b8; margin-bottom:6px; text-transform:uppercase; letter-spacing:0.5px;">Stock Level <span id="lbl-stock" style="color:#a5b4fc; float:right;">100</span></label>
+              <input type="range" id="sim-stock" min="0" max="1000" step="5" value="100" oninput="document.getElementById('lbl-stock').textContent=this.value; runSimulator()"
+                style="width:100%; accent-color:#8b5cf6;">
+            </div>
+
+            <!-- Rating -->
+            <div>
+              <label style="display:block; font-size:12px; color:#94a3b8; margin-bottom:6px; text-transform:uppercase; letter-spacing:0.5px;">Customer Rating <span id="lbl-rating" style="color:#a5b4fc; float:right;">4.2 ★</span></label>
+              <input type="range" id="sim-rating" min="1" max="5" step="0.1" value="4.2" oninput="document.getElementById('lbl-rating').textContent=parseFloat(this.value).toFixed(1)+' ★'; runSimulator()"
+                style="width:100%; accent-color:#8b5cf6;">
+            </div>
+
+            <!-- Reviews -->
+            <div>
+              <label style="display:block; font-size:12px; color:#94a3b8; margin-bottom:6px; text-transform:uppercase; letter-spacing:0.5px;">Reviews Count <span id="lbl-reviews" style="color:#a5b4fc; float:right;">500</span></label>
+              <input type="range" id="sim-reviews" min="0" max="20000" step="50" value="500" oninput="document.getElementById('lbl-reviews').textContent=Number(this.value).toLocaleString(); runSimulator()"
+                style="width:100%; accent-color:#8b5cf6;">
+            </div>
+
+            <!-- Discount -->
+            <div>
+              <label style="display:block; font-size:12px; color:#94a3b8; margin-bottom:6px; text-transform:uppercase; letter-spacing:0.5px;">Discount (%) <span id="lbl-discount" style="color:#a5b4fc; float:right;">5%</span></label>
+              <input type="range" id="sim-discount" min="0" max="50" step="0.5" value="5" oninput="document.getElementById('lbl-discount').textContent=this.value+'%'; runSimulator()"
+                style="width:100%; accent-color:#8b5cf6;">
+            </div>
+
+            <!-- Load from existing product -->
+            <div style="display:flex; align-items:flex-end;">
+              <div style="width:100%;">
+                <label style="display:block; font-size:12px; color:#94a3b8; margin-bottom:6px; text-transform:uppercase; letter-spacing:0.5px;">Load Existing Product</label>
+                <select id="sim-product-loader" onchange="loadProductIntoSimulator(this.value)" style="width:100%; background:#0f172a; border:1px solid rgba(139,92,246,0.4); color:#e2e8f0; padding:10px; border-radius:8px; font-size:13px;">
+                  <option value="">— Select a product —</option>
+                </select>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Result Display -->
+          <div id="sim-result" style="background:rgba(139,92,246,0.12); border:1px solid rgba(139,92,246,0.35); border-radius:12px; padding:20px; text-align:center; min-height:100px; display:flex; align-items:center; justify-content:center;">
+            <div style="color:#94a3b8; font-size:14px;">⬆️ Adjust any parameter above to get a price prediction</div>
+          </div>
+
+          <!-- Apply to product -->
+          <div id="sim-apply-area" style="display:none; margin-top:16px; text-align:right;">
+            <select id="sim-apply-product" style="background:#0f172a; border:1px solid rgba(139,92,246,0.4); color:#e2e8f0; padding:8px 12px; border-radius:8px; font-size:13px; margin-right:10px;">
+              <option value="">— Apply predicted price to product —</option>
+            </select>
+            <button onclick="applyPredictedPrice()" style="background:linear-gradient(135deg,#7c3aed,#8b5cf6); color:white; border:none; padding:10px 20px; border-radius:8px; font-size:14px; font-weight:700; cursor:pointer;">
+              ✅ Apply & Save to DB
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel" style="margin-top:24px;">
         <div class="panel-header">Recent Orders</div>
         <div class="data-table-container">
           <table class="data-table">
@@ -86,6 +198,7 @@
       </div>
 
     </main>
+
   </div>
 
   <div id="toast-container" class="toast-container"></div>

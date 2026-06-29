@@ -33,7 +33,7 @@
     <main class="admin-main">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 24px;">
         <h1 class="page-title" style="margin:0; font-size:28px; color:var(--color-navy);">Manage Products</h1>
-        <button class="btn btn-primary">+ Add New Product</button>
+        <button class="btn btn-primary" onclick="openAddProductModal()">+ Add New Product</button>
       </div>
 
       <div class="panel">
@@ -58,6 +58,181 @@
       </div>
     </main>
   </div>
+
+  <!-- Add/Edit Product Modal Overlay -->
+  <div id="product-modal" class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title" id="modal-title-text">Add New Product</h2>
+        <button class="modal-close" onclick="closeProductModal()">&times;</button>
+      </div>
+      <form id="product-form" onsubmit="saveProduct(event)">
+        <input type="hidden" id="prod-id">
+        <div class="modal-grid">
+          <div class="form-group modal-grid-full">
+            <label class="form-label" style="color: #cbd5e1;" for="prod-name">Product Name</label>
+            <input type="text" id="prod-name" class="form-input modal-form-input" required placeholder="e.g. iPhone 15 Pro Max">
+          </div>
+          <div class="form-group">
+            <label class="form-label" style="color: #cbd5e1;" for="prod-category">Category</label>
+            <select id="prod-category" class="form-input modal-form-input" required>
+              <option value="Mobile Phone">Mobile Phone</option>
+              <option value="Laptop">Laptop</option>
+              <option value="Television">Television</option>
+              <option value="Earphones">Earphones</option>
+              <option value="Smartwatch">Smartwatch</option>
+              <option value="Camera">Camera</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" style="color: #cbd5e1;" for="prod-segment">Segment / Sub Category</label>
+            <select id="prod-segment" class="form-input modal-form-input" required>
+              <option value="Budget">Budget</option>
+              <option value="Mid">Mid-Range</option>
+              <option value="Premium">Premium</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" style="color: #cbd5e1;" for="prod-base-price">Base Price (₹)</label>
+            <input type="number" id="prod-base-price" class="form-input modal-form-input" required min="0" placeholder="e.g. 50000">
+          </div>
+          <div class="form-group">
+            <label class="form-label" style="color: #cbd5e1;" for="prod-comp-price">Competitor Price (₹)</label>
+            <input type="number" id="prod-comp-price" class="form-input modal-form-input" required min="0" placeholder="e.g. 49000">
+          </div>
+          <div class="form-group">
+            <label class="form-label" style="color: #cbd5e1;" for="prod-stock">Stock Level</label>
+            <input type="number" id="prod-stock" class="form-input modal-form-input" required min="0" placeholder="e.g. 100">
+          </div>
+          <div class="form-group">
+            <label class="form-label" style="color: #cbd5e1;" for="prod-demand">Current Demand (Units)</label>
+            <input type="number" id="prod-demand" class="form-input modal-form-input" required min="0" placeholder="e.g. 85">
+          </div>
+          <div class="form-group">
+            <label class="form-label" style="color: #cbd5e1;" for="prod-rating">Customer Rating (1-5)</label>
+            <input type="number" id="prod-rating" class="form-input modal-form-input" required min="1" max="5" step="0.1" placeholder="e.g. 4.5">
+          </div>
+          <div class="form-group">
+            <label class="form-label" style="color: #cbd5e1;" for="prod-reviews">Reviews Count</label>
+            <input type="number" id="prod-reviews" class="form-input modal-form-input" required min="0" placeholder="e.g. 120">
+          </div>
+          <div class="form-group">
+            <label class="form-label" style="color: #cbd5e1;" for="prod-discount">Base Discount (%)</label>
+            <input type="number" id="prod-discount" class="form-input modal-form-input" required min="0" max="100" step="0.1" placeholder="e.g. 5.0">
+          </div>
+          <div class="form-group">
+            <label class="form-label" style="color: #cbd5e1;" for="prod-season">Season</label>
+            <select id="prod-season" class="form-input modal-form-input" required>
+              <option value="Normal">Normal</option>
+              <option value="Festive">Festive</option>
+            </select>
+          </div>
+          <div class="form-group modal-grid-full">
+            <label class="form-label" style="color: #cbd5e1;" for="prod-image">Image URL</label>
+            <input type="text" id="prod-image" class="form-input modal-form-input" placeholder="https://example.com/image.jpg">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" onclick="closeProductModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="btn-save-product">Save Product</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <style>
+    /* Modal overlay styling */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(10, 14, 26, 0.7);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 2000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .modal-content {
+      background: rgba(30, 41, 59, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
+      border-radius: var(--radius-card);
+      padding: 24px;
+      width: 90%;
+      max-width: 600px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+      color: #fff;
+      transform: scale(0.9);
+      transition: transform 0.3s ease;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    .modal-overlay.active .modal-content {
+      transform: scale(1);
+    }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding-bottom: 10px;
+    }
+    .modal-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #fff;
+    }
+    .modal-close {
+      background: transparent;
+      border: none;
+      color: #94a3b8;
+      font-size: 28px;
+      cursor: pointer;
+      line-height: 1;
+      transition: color 0.2s;
+    }
+    .modal-close:hover {
+      color: #fff;
+    }
+    .modal-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .modal-grid-full {
+      grid-column: span 2;
+    }
+    .modal-form-input {
+      background-color: rgba(15, 23, 42, 0.6) !important;
+      border-color: rgba(255, 255, 255, 0.15) !important;
+      color: #f8fafc !important;
+    }
+    .modal-form-input:focus {
+      background-color: rgba(15, 23, 42, 0.85) !important;
+      border-color: var(--color-primary) !important;
+    }
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding-top: 16px;
+    }
+  </style>
 
   <div id="toast-container" class="toast-container"></div>
 

@@ -105,8 +105,8 @@ def _prepare_row(data: pd.DataFrame) -> pd.DataFrame:
     d["day_enc"]       = d["day_of_week"].map(_DAY_MAP).fillna(0).astype(int)
     d["is_weekend"]    = d["day_enc"].isin([5, 6]).astype(int)
     d["price_vs_comp"] = d["base_price"] / (d["competitor_price"] + 1e-6)
-    d["demand_norm"]   = d["demand"]  / (d["demand"].max()  + 1e-6)
-    d["stock_norm"]    = d["stock"]   / (d["stock"].max()   + 1e-6)
+    d["demand_norm"]   = d["demand"]  / 575.0
+    d["stock_norm"]    = d["stock"]   / 1000.0
     d["discount_ratio"] = d["discount"] / 100.0
     d["reviews_log"]   = np.log1p(d["reviews"])
     return d

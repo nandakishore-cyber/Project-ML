@@ -110,12 +110,15 @@ def get_cart(
         price = float(product.current_price) if product.current_price else 0.0
         cart_items.append(
             CartItemOut(
-                id            = item.id,
-                product_id    = item.product_id,
-                product_name  = product.name,
-                current_price = price,
-                quantity      = item.quantity,
-                added_at      = item.added_at,
+                id       = item.id,
+                quantity = item.quantity,
+                added_at = item.added_at,
+                product  = {
+                    "id": product.id,
+                    "name": product.name,
+                    "current_price": price,
+                    "image_url": product.image_url
+                }
             )
         )
         total += price * item.quantity

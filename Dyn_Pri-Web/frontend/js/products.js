@@ -1,230 +1,6 @@
-<<<<<<< HEAD
-/* frontend/js/products.js */
-
-let allProducts = [];
-let currentFilters = {
-  categories: [],
-  sub_categories: [], // Budget, Mid, Premium
-  min_rating: 0,
-  max_price: 300000,
-  in_stock: false
-};
-let currentSort = 'default';
-
-document.addEventListener("DOMContentLoaded", () => {
-  updateNavAuthUI();
-  initProductsPage();
-});
-
-async function initProductsPage() {
-  // Check URL params for category
-  const params = new URLSearchParams(window.location.search);
-  const initialCategory = params.get('category');
-  if (initialCategory) {
-    currentFilters.categories.push(initialCategory);
-    // check the checkbox if it exists
-    const cb = document.querySelector(`input.filter-cat[value="${initialCategory}"]`);
-    if (cb) cb.checked = true;
-  }
-
-  // Bind filter events
-  document.querySelectorAll('.filter-cat').forEach(cb => {
-    cb.addEventListener('change', handleFilterChange);
-  });
-  document.querySelectorAll('.filter-subcat').forEach(cb => {
-    cb.addEventListener('change', handleFilterChange);
-  });
-  const priceSlider = document.getElementById('price-slider');
-  if (priceSlider) {
-    priceSlider.addEventListener('input', (e) => {
-      document.getElementById('price-val').textContent = `₹${e.target.value}`;
-    });
-    priceSlider.addEventListener('change', (e) => {
-      currentFilters.max_price = parseInt(e.target.value);
-      applyFiltersAndSort();
-    });
-  }
-  document.querySelectorAll('.star-filter').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      document.querySelectorAll('.star-filter').forEach(b => b.classList.remove('active'));
-      const tgt = e.currentTarget;
-      tgt.classList.add('active');
-      currentFilters.min_rating = parseFloat(tgt.dataset.val);
-      applyFiltersAndSort();
-    });
-  });
-  const stockToggle = document.getElementById('in-stock-toggle');
-  if (stockToggle) {
-    stockToggle.addEventListener('change', (e) => {
-       currentFilters.in_stock = e.target.checked;
-       applyFiltersAndSort();
-    });
-  }
-
-  const sortSelect = document.getElementById('sort-select');
-  if (sortSelect) {
-    sortSelect.addEventListener('change', (e) => {
-      currentSort = e.target.value;
-      applyFiltersAndSort();
-    });
-  }
-
-  await fetchAndRenderProducts();
-}
-
-async function fetchAndRenderProducts() {
-  const grid = document.getElementById('products-grid');
-  grid.innerHTML = `<div class="empty-state" style="grid-column: 1/-1;"><span class="spinner spinner-primary"></span></div>`;
-  
-  const res = await apiGetProducts();
-  if (!res.success) {
-    grid.innerHTML = `<div class="empty-state" style="grid-column: 1/-1;">Error loading products: ${res.error}</div>`;
-    return;
-  }
-  
-  allProducts = res.data;
-  applyFiltersAndSort();
-}
-
-function handleFilterChange() {
-  const catCbs = document.querySelectorAll('.filter-cat:checked');
-  currentFilters.categories = Array.from(catCbs).map(cb => cb.value);
-
-  const subCatCbs = document.querySelectorAll('.filter-subcat:checked');
-  currentFilters.sub_categories = Array.from(subCatCbs).map(cb => cb.value);
-
-  applyFiltersAndSort();
-}
-
-function applyFiltersAndSort() {
-  let filtered = allProducts;
-
-  // Category
-  if (currentFilters.categories.length > 0) {
-    filtered = filtered.filter(p => currentFilters.categories.includes(p.category));
-  }
-  
-  // Sub-category check logic (Budget/Mid/Premium)
-  // Assuming the backend has a `tier` or `competitor_price_tier` field, or we infer from segment
-  if (currentFilters.sub_categories.length > 0) {
-    filtered = filtered.filter(p => {
-       // if backend has product.segment:
-       if (p.segment) return currentFilters.sub_categories.includes(p.segment);
-       return true; // fallback if no segment data
-    });
-  }
-
-  // Price
-  if (currentFilters.max_price < 300000) {
-    filtered = filtered.filter(p => p.current_price <= currentFilters.max_price);
-  }
-
-  // Rating
-  if (currentFilters.min_rating > 0) {
-    filtered = filtered.filter(p => (p.rating || 0) >= currentFilters.min_rating);
-  }
-
-  // Stock
-  if (currentFilters.in_stock) {
-    filtered = filtered.filter(p => p.stock > 0);
-  }
-
-  // Sort
-  if (currentSort === 'price-asc') {
-    filtered.sort((a,b) => a.current_price - b.current_price);
-  } else if (currentSort === 'price-desc') {
-    filtered.sort((a,b) => b.current_price - a.current_price);
-  } else if (currentSort === 'rating') {
-    filtered.sort((a,b) => (b.rating || 0) - (a.rating || 0));
-  }
-
-  // Update Title + Count
-  document.getElementById('product-count').textContent = `${filtered.length} products`;
-  let title = "All Products";
-  if (currentFilters.categories.length === 1) {
-    title = currentFilters.categories[0];
-  } else if (currentFilters.categories.length > 1) {
-    title = "Multiple Categories";
-  }
-  const params = new URLSearchParams(window.location.search);
-  const qStr = params.get('category');
-  if(qStr && currentFilters.categories.length === 1) {
-     title = qStr; 
-  }
-  document.getElementById('page-title-text').textContent = title;
-
-  renderProductGrid(filtered);
-}
-
-function renderProductGrid(products) {
-  const grid = document.getElementById('products-grid');
-  
-  if (products.length === 0) {
-    grid.innerHTML = `<div class="empty-state" style="grid-column: 1/-1;">No products match your filters.</div>`;
-    return;
-  }
-
-  grid.innerHTML = products.map(product => {
-    const oldPrice = product.base_price ? product.base_price : product.current_price; 
-    let strikePriceHtml = '';
-    if (product.current_price < oldPrice) {
-       strikePriceHtml = `<span class="old-price">₹${Math.round(oldPrice)}</span>`;
-    }
-
-    const placeholderImg = "https://placehold.co/400x400/F5F6F8/9CA3AF?text=No+Image";
-    const imgUrl = product.image_url || placeholderImg;
-    
-    let segmentBadgeHtml = '';
-    if (product.segment) { // Budget, Mid, Premium
-       let colorClass = 'badge-blue';
-       if(product.segment==='Premium') colorClass = 'badge-warning';
-       if(product.segment==='Budget') colorClass = 'badge-success';
-       segmentBadgeHtml = `<span class="badge ${colorClass}" style="position:absolute; top:8px; left:8px; z-index:2;">${product.segment}</span>`;
-    }
-
-    return `
-      <div class="card product-card">
-        <a href="product-detail.html?id=${product.id}" class="product-card-img-zone">
-          ${segmentBadgeHtml}
-          <img src="${imgUrl}" alt="${product.name}" loading="lazy" onerror="this.src='${placeholderImg}'">
-        </a>
-        <div style="display:flex; justify-content: space-between; align-items: start;">
-           <div class="price-row">
-             <span class="current-price">₹${Math.round(product.current_price)}</span>
-             ${strikePriceHtml}
-           </div>
-           <button class="btn-icon" style="width: 32px; height: 32px; border: none;" onclick="alert('Added to wishlist')">♡</button>
-        </div>
-        
-        <div class="star-rating">
-          <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-          <span>${product.rating || '4.0'}</span>
-        </div>
-        
-        <a href="product-detail.html?id=${product.id}"><h3 class="product-card-title">${product.name}</h3></a>
-        
-        <div style="margin-top: auto; display: flex; gap: 8px;">
-           <button class="btn btn-primary btn-block" onclick="addToCart(${product.id})">🛒 Add to Cart</button>
-        </div>
-      </div>
-    `;
-  }).join('');
-}
-
-async function addToCart(productId) {
-  if (!isLoggedIn()) {
-     window.location.href = "login.html";
-     return;
-  }
-  const res = await apiAddToCart(productId, 1);
-  if (res.success) {
-     alert("Item added to cart!");
-  } else {
-     alert(res.error);
-=======
 // frontend/js/products.js
 
-let allProductsOriginal = []; // Store fetched products to apply client-side filtering if backend doesn't support thorough filtering
+let allProductsOriginal = []; // Store fetched products for client-side filtering
 
 window.initProductsPage = () => {
   // Read URL params and set initial filters
@@ -267,10 +43,6 @@ window.fetchAndRenderProducts = async () => {
     </div>
   `;
 
-  // Fetch all products (If backend supports API filters we would pass them here. 
-  // Given standard plan specs, we might fetch all and filter in JS, or build query string if supported.
-  // We'll build query string for category mostly or fetch all and filter client side for rich UI experience.)
-  
   const res = await apiGetProducts();
   
   if (!res.success) {
@@ -289,7 +61,7 @@ window.fetchAndRenderProducts = async () => {
   }
 
   allProductsOriginal = products || [];
-  applyFiltersAndSort(); // This will trigger rendering
+  applyFiltersAndSort();
 };
 
 window.applyFiltersAndSort = () => {
@@ -313,7 +85,7 @@ window.applyFiltersAndSort = () => {
     document.getElementById('page-title').innerText = 'All Electronics';
   }
 
-  // Update URL purely for category if one is selected (aesthetic)
+  // Update URL purely for category if one is selected
   updateURLParams(categories);
 
   // Apply filters
@@ -373,21 +145,37 @@ window.renderProductGrid = (products) => {
   }
 
   products.forEach(p => {
-    // Note: createProductCardHTML could be centralized in a utils file, 
-    // but we define a local one or re-use logic to match Figma requirements strictly.
     const imageUrl = p.image_url || 'https://placehold.co/400x400/F5F6F8/9CA3AF?text=No+Image';
     const rating = p.rating || 0;
     const reviews = p.review_count || 0;
     
+    // Price dynamic calculation
+    const base = p.base_price || p.current_price;
+    const current = p.current_price;
     let badgeHtml = '';
-    if (p.season === 'Festive') {
-      badgeHtml = `<div class="badge badge-warning" style="position:absolute; top:12px; left:12px; z-index:2;">✨ Festive</div>`;
+    let dynamicText = '⚖️ Price Remains Same';
+    let dynamicColor = 'var(--color-muted)';
+
+    if (current > base) {
+      const incPercent = Math.round(((current - base) / base) * 100);
+      badgeHtml = `<div class="badge badge-danger" style="position:absolute; top:12px; left:12px; z-index:2; box-shadow: 0 4px 10px rgba(239, 68, 68, 0.3);">📈 High Demand</div>`;
+      dynamicText = `📈 Price will be high soon!`;
+      dynamicColor = 'var(--color-danger)';
+    } else if (current < base) {
+      const dropPercent = Math.round(((base - current) / base) * 100);
+      badgeHtml = `<div class="badge badge-success" style="position:absolute; top:12px; left:12px; z-index:2; box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3);">📉 Price Dropped</div>`;
+      dynamicText = `📉 Price dropped by ${dropPercent}%`;
+      dynamicColor = 'var(--color-success)';
     } else {
-      const tierClass = p.segment === 'Premium' ? 'badge-primary' : (p.segment === 'Budget' ? 'badge-success' : 'badge-info');
-      badgeHtml = `<div class="badge ${tierClass}" style="position:absolute; top:12px; left:12px; z-index:2;">${p.segment}</div>`;
+      if (p.season === 'Festive') {
+        badgeHtml = `<div class="badge badge-warning" style="position:absolute; top:12px; left:12px; z-index:2;">✨ Festive</div>`;
+      } else {
+        const tierClass = p.sub_category === 'Premium' ? 'badge-primary' : (p.sub_category === 'Budget' ? 'badge-success' : 'badge-info');
+        badgeHtml = `<div class="badge ${tierClass}" style="position:absolute; top:12px; left:12px; z-index:2;">${p.sub_category}</div>`;
+      }
     }
 
-    // Price updated tag logic if within 24hrs (assume last_updated exists)
+    // Price updated tag logic if within 24hrs
     let updatedTag = '';
     if (p.last_updated) {
       const hoursAgo = Math.round((new Date() - new Date(p.last_updated)) / (1000 * 60 * 60));
@@ -407,7 +195,10 @@ window.renderProductGrid = (products) => {
         ${updatedTag}
         <div class="price-row">
           <span class="price">₹${(p.current_price || 0).toLocaleString()}</span>
-          ${p.original_price > p.current_price ? `<span class="old-price">₹${p.original_price.toLocaleString()}</span>` : ''}
+          ${(p.base_price && p.base_price > p.current_price) ? `<span class="old-price">₹${p.base_price.toLocaleString()}</span>` : ''}
+        </div>
+        <div style="font-size: 11px; color: ${dynamicColor}; margin-bottom: 6px; display: flex; align-items: center; gap: 4px; font-weight: 600;">
+          <span title="This price is dynamically adjusted based on real-time market demand and may change.">⚡ ${dynamicText}</span>
         </div>
         
         <div class="rating-row">
@@ -473,6 +264,5 @@ window.addToCart = async function(id) {
     if(badge) badge.innerText = parseInt(badge.innerText || '0') + 1;
   } else {
     showToast(res.error || 'Failed to add item', 'error');
->>>>>>> Web-FE
   }
 }

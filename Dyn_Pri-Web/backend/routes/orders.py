@@ -108,6 +108,17 @@ def place_order(
         db.commit()
         db.refresh(order)
 
+        # ── Trigger Competitive Pricing ──
+        try:
+            from services.competitive_pricing import adjust_competitor_prices
+            ordered_pids = [oi["product_id"] for oi in order_item_data]
+            adjust_competitor_prices(ordered_pids, db)
+            db.commit()
+        except Exception as e:
+            import logging
+            logging.getLogger(__name__).error(f"Failed to adjust competitor prices: {e}")
+            db.rollback()
+
         return PlaceOrderResponse(
             order_id     = order.id,
             total_amount = float(order.total_amount),
@@ -136,7 +147,7 @@ def get_orders(
     """Return all orders belonging to the authenticated user, newest first."""
     return (
         db.query(Order)
-        .options(joinedload(Order.items))
+        .options(joinedload(Order.items).joinedload(OrderItem.product))
         .filter(Order.user_id == current_user.id)
         .order_by(Order.created_at.desc())
         .all()
@@ -161,7 +172,7 @@ def get_order(
     """
     order = (
         db.query(Order)
-        .options(joinedload(Order.items))
+        .options(joinedload(Order.items).joinedload(OrderItem.product))
         .filter(Order.id == order_id)
         .first()
     )

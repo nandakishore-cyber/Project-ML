@@ -10,8 +10,8 @@ from sqlalchemy.orm import Session
 
 from database import get_db
 from models.user import User
-from schemas.auth import LoginRequest, SignupRequest, SignupResponse, TokenResponse
-from services.auth_service import create_access_token, hash_password, verify_password
+from schemas.auth import LoginRequest, SignupRequest, SignupResponse, TokenResponse, UserInfo
+from services.auth_service import create_access_token, hash_password, verify_password, get_current_user
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
@@ -69,4 +69,29 @@ def login(body: LoginRequest, db: Session = Depends(get_db)):
         )
 
     token = create_access_token({"sub": str(user.id)})
-    return TokenResponse(access_token=token, token_type="bearer")
+    user_info = {
+        "id": user.id,
+        "name": user.name,
+        "email": user.email,
+        "is_admin": user.is_admin
+    }
+    return TokenResponse(
+        access_token=token,
+        token_type="bearer",
+        user=user_info,
+        is_admin=user.is_admin
+    )
+
+
+@router.get(
+    "/me",
+    response_model=UserInfo,
+    summary="Get current user details",
+)
+def get_me(current_user: User = Depends(get_current_user)):
+    return UserInfo(
+        id=current_user.id,
+        name=current_user.name,
+        email=current_user.email,
+        is_admin=current_user.is_admin
+    )

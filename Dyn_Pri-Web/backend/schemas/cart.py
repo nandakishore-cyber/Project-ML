@@ -33,14 +33,18 @@ class CartUpdateRequest(BaseModel):
         return v
 
 
+class CartProductOut(BaseModel):
+    id: int
+    name: str
+    current_price: float
+    image_url: Optional[str] = None
+
 class CartItemOut(BaseModel):
     """One cart row with LIVE product price and name joined in."""
     id:            int
-    product_id:    int
-    product_name:  Optional[str]      = None
-    current_price: float
     quantity:      int
     added_at:      Optional[datetime] = None
+    product:       CartProductOut
 
     model_config = ConfigDict(from_attributes=True)
 

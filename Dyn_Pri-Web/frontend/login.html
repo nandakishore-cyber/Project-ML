@@ -7,6 +7,14 @@
   <link rel="stylesheet" href="css/main.css">
   <link rel="stylesheet" href="css/components.css">
   <link rel="stylesheet" href="css/pages/login.css">
+  
+  <script src="js/auth.js"></script>
+  <script>
+    // Prevent flash: Auto redirect if already logged in before body renders
+    if (isLoggedIn()) {
+      window.location.replace(isAdmin() ? 'admin/dashboard.html' : 'index.html');
+    }
+  </script>
 </head>
 <body class="auth-page">
 
@@ -36,9 +44,21 @@
           <input type="password" id="login-password" class="form-input" placeholder="••••••••" required>
         </div>
         
-        <button type="submit" class="btn btn-primary btn-block" id="btn-login">
+        <button type="submit" class="btn btn-primary btn-block" id="btn-login" style="margin-bottom: 16px;">
           Sign In
         </button>
+
+        <div style="border-top: 1px solid var(--color-border); padding-top: 16px; margin-top: 8px;">
+          <p style="font-size: 12px; color: var(--color-muted); margin-bottom: 8px; text-align: center;">Quick Demo Login</p>
+          <div style="display: flex; gap: 8px;">
+            <button type="button" class="btn btn-outline" style="flex: 1; font-size: 13px;" onclick="document.getElementById('login-email').value='admin@dynprice.com'; document.getElementById('login-password').value='admin123'; document.getElementById('btn-login').click();">
+              Admin Login
+            </button>
+            <button type="button" class="btn btn-outline" style="flex: 1; font-size: 13px;" onclick="document.getElementById('login-email').value='user@dynprice.com'; document.getElementById('login-password').value='user123'; document.getElementById('btn-login').click();">
+              User Login
+            </button>
+          </div>
+        </div>
       </form>
 
       <!-- Sign Up Form -->
@@ -115,13 +135,22 @@
       const res = await apiLogin(email, pass);
       
       if (res.success) {
+        const userData = res.data.user || { email, is_admin: res.data.is_admin || false };
         saveToken(res.data.access_token);
-        // Try getting user profile info if provided, else dummy or fetch separately
-        // if API doesn't return user obj in login, we might need a separate call.
-        saveUser(res.data.user || { email, is_admin: res.data.is_admin || false }); 
-        
-        const redirect = localStorage.getItem('redirectUrl') || '/frontend/index.html';
+        saveUser(userData);
+
+        // Redirect admins to admin dashboard, regular users to home
+        const savedRedirect = localStorage.getItem('redirectUrl');
         localStorage.removeItem('redirectUrl');
+
+        let redirect;
+        if (savedRedirect) {
+          redirect = savedRedirect;
+        } else if (userData.is_admin || res.data.is_admin) {
+          redirect = 'admin/dashboard.html';
+        } else {
+          redirect = 'index.html';
+        }
         window.location.href = redirect;
       } else {
         showError('login-error', res.error);
@@ -141,25 +170,23 @@
       const res = await apiSignup({ name, email, password });
       
       if (res.success) {
-        // Auto-login after signup, or just switch to login tab
-        switchTab('login');
-        document.getElementById('login-email').value = email;
-        showError('login-error', 'Account created successfully! Please log in.');
-        document.getElementById('login-error').style.backgroundColor = '#dcfce7';
-        document.getElementById('login-error').style.color = 'var(--color-success)';
-        document.getElementById('login-error').style.borderColor = '#bbf7d0';
+        // Auto-login after signup
+        const loginRes = await apiLogin(email, password);
+        if (loginRes.success) {
+          const userData = loginRes.data.user || { email, is_admin: false };
+          saveToken(loginRes.data.access_token);
+          saveUser(userData);
+          window.location.href = 'index.html';
+        } else {
+          switchTab('login');
+          document.getElementById('login-email').value = email;
+          showError('login-error', 'Account created! Please log in.');
+        }
       } else {
         showError('signup-error', res.error);
+        setLoading('btn-signup', false, 'Create Account');
       }
-      setLoading('btn-signup', false, 'Create Account');
     }
-
-    // Auto redirect if already logged in
-    window.addEventListener('DOMContentLoaded', () => {
-      if (isLoggedIn()) {
-        window.location.href = '/frontend/index.html';
-      }
-    });
   </script>
 </body>
 </html>

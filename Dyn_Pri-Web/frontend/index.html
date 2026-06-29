@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="css/components.css">
   <link rel="stylesheet" href="css/pages/home.css">
 </head>
-<body class="page-offset">
+<body class="home-page page-offset">
 
   <!-- Navbar Component -->
   <nav class="navbar">
@@ -18,8 +18,8 @@
       
       <ul class="navbar-nav desktop-only">
         <li><a href="products.html" class="nav-link">All Products</a></li>
-        <li><a href="products.html?category=Laptops" class="nav-link">Laptops</a></li>
-        <li><a href="products.html?category=Phones" class="nav-link">Phones</a></li>
+        <li><a href="products.html?category=Laptop" class="nav-link">Laptops</a></li>
+        <li><a href="products.html?category=Mobile Phone" class="nav-link">Phones</a></li>
       </ul>
 
       <div class="navbar-actions">
@@ -42,34 +42,169 @@
   </nav>
 
   <main>
-    <!-- Hero Section -->
-    <section class="hero">
-      <div class="container">
-        <h1>Smart Prices. Always the Best Deal.</h1>
-        <p>AI-powered pricing updated in real time based on demand.</p>
-        <a href="products.html" class="btn btn-primary">Shop Electronics</a>
+    <!-- ===== HERO SEARCH BAR ===== -->
+    <div class="hero-search-bar container">
+      <div class="hsb-inner">
+        <div class="hsb-left">
+          <span class="hsb-logo">⚡ DynPrice</span>
+          <span class="hsb-tagline">Smart AI Pricing</span>
+        </div>
+        <div class="hsb-search">
+          <select class="hsb-category-select">
+            <option>All</option>
+            <option>Laptops</option>
+            <option>Mobiles</option>
+            <option>Smartwatches</option>
+            <option>Audio</option>
+            <option>TVs</option>
+          </select>
+          <input type="text" class="hsb-input" placeholder="Search for products, brands..." id="hero-search-input" onkeydown="if(event.key==='Enter') window.location.href='products.html?q='+this.value">
+          <button class="hsb-btn" onclick="window.location.href='products.html?q='+document.getElementById('hero-search-input').value">🔍</button>
+        </div>
+        <div class="hsb-right">
+          <a href="cart.html" class="hsb-cart-btn">🛒 Cart <span class="hsb-cart-count" id="hsb-cart-count">0</span></a>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ===== MINI TOP DEALS STRIP ===== -->
+    <div class="top-deals-strip container">
+      <div class="tds-label">🔥 Top Categories</div>
+      <div class="tds-items">
+        <a href="products.html?category=Laptop" class="tds-chip">💻 Laptops</a>
+        <a href="products.html?category=Mobile Phone" class="tds-chip">📱 Mobiles</a>
+        <a href="products.html?category=Smartwatch" class="tds-chip">⌚ Smartwatches</a>
+        <a href="products.html?category=Earphones" class="tds-chip">🎧 Audio</a>
+        <a href="products.html?category=Television" class="tds-chip">📺 Smart TVs</a>
+        <a href="products.html?category=Camera" class="tds-chip">📷 Cameras</a>
+        <a href="products.html" class="tds-chip tds-chip-highlight">⚡ Flash Deals</a>
+      </div>
+    </div>
+
+    <!-- Carousel Section -->
+    <section class="home-carousel-wrapper">
+      <div class="carousel-container" id="main-carousel">
+        <div class="carousel-slide active" style="background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #3b82f6 100%);">
+          <div class="slide-content">
+            <div class="slide-tag">🔥 LIMITED TIME</div>
+            <h2>Big Billion Electronics Sale</h2>
+            <p>AI-powered dynamic prices. Grab before the price shoots up.</p>
+            <div class="slide-actions">
+              <a href="products.html" class="slide-cta-primary">Shop Now →</a>
+              <a href="products.html?category=Laptop" class="slide-cta-secondary">View Laptops</a>
+            </div>
+          </div>
+        </div>
+        <div class="carousel-slide" style="background: linear-gradient(135deg, #1a0533 0%, #4c1d95 50%, #7c3aed 100%);">
+          <div class="slide-content">
+            <div class="slide-tag">⌚ NEW ARRIVALS</div>
+            <h2>Smartwatches &amp; Wearables</h2>
+            <p>Track your fitness with the latest tech. Prices drop in real-time!</p>
+            <div class="slide-actions">
+              <a href="products.html?category=Smartwatch" class="slide-cta-primary">Explore →</a>
+              <a href="products.html" class="slide-cta-secondary">All Products</a>
+            </div>
+          </div>
+        </div>
+        <div class="carousel-slide" style="background: linear-gradient(135deg, #064e3b 0%, #047857 50%, #10b981 100%);">
+          <div class="slide-content">
+            <div class="slide-tag">📉 PRICE DROPPED</div>
+            <h2>Today's Flash Deals</h2>
+            <p>Dynamic pricing engine found the lowest prices of the day for you!</p>
+            <div class="slide-actions">
+              <a href="products.html" class="slide-cta-primary">Grab Deals →</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <button class="carousel-btn left" onclick="moveCarousel(-1)">&#10094;</button>
+      <button class="carousel-btn right" onclick="moveCarousel(1)">&#10095;</button>
+      <div class="carousel-dots">
+        <span class="dot active" onclick="setCarousel(0)"></span>
+        <span class="dot" onclick="setCarousel(1)"></span>
+        <span class="dot" onclick="setCarousel(2)"></span>
       </div>
     </section>
 
-    <!-- Category Strip -->
+    <!-- Trust Bar -->
+    <div class="trust-bar container">
+      <div class="trust-item"><span>🚚</span><span>Free Delivery Over ₹499</span></div>
+      <div class="trust-item"><span>⚡</span><span>Real-Time Dynamic Pricing</span></div>
+      <div class="trust-item"><span>🔒</span><span>100% Secure Payments</span></div>
+      <div class="trust-item"><span>↩️</span><span>Easy 30-Day Returns</span></div>
+    </div>
+
+    <!-- Circular Category Strip -->
     <section class="category-section container">
-      <div class="category-strip">
-        <a href="products.html?category=Mobile Phones" class="category-pill">📱 Mobile Phones</a>
-        <a href="products.html?category=Laptops" class="category-pill">💻 Laptops</a>
-        <a href="products.html?category=TVs" class="category-pill">📺 TVs</a>
-        <a href="products.html?category=Earphones" class="category-pill">🎧 Earphones</a>
-        <a href="products.html?category=Smartwatches" class="category-pill">⌚ Smartwatches</a>
-        <a href="products.html?category=Cameras" class="category-pill">📷 Cameras</a>
+      <div class="category-strip circular-categories">
+        <a href="products.html?category=Mobile Phone" class="category-circle-item">
+          <div class="circle-icon">📱</div>
+          <span>Mobiles</span>
+        </a>
+        <a href="products.html?category=Laptop" class="category-circle-item">
+          <div class="circle-icon">💻</div>
+          <span>Laptops</span>
+        </a>
+        <a href="products.html?category=Television" class="category-circle-item">
+          <div class="circle-icon">📺</div>
+          <span>TVs</span>
+        </a>
+        <a href="products.html?category=Earphones" class="category-circle-item">
+          <div class="circle-icon">🎧</div>
+          <span>Audio</span>
+        </a>
+        <a href="products.html?category=Smartwatch" class="category-circle-item">
+          <div class="circle-icon">⌚</div>
+          <span>Watches</span>
+        </a>
+        <a href="products.html?category=Camera" class="category-circle-item">
+          <div class="circle-icon">📷</div>
+          <span>Cameras</span>
+        </a>
+      </div>
+    </section>
+
+
+    <!-- Deal of the Day -->
+    <section class="container deal-of-day-section">
+      <div class="dod-header">
+        <div class="dod-title-box">
+          <h2 class="section-title text-navy mb-0" style="font-weight: 800; font-size: 24px;">Deal of the Day ⚡</h2>
+          
+          <div class="dod-timer-container">
+            <span class="timer-text">Ends in:</span>
+            <div class="timer-box" id="timer-h">05</div> <span class="timer-unit">h</span>
+            <div class="timer-box" id="timer-m">23</div> <span class="timer-unit">m</span>
+            <div class="timer-box" id="timer-s">10</div> <span class="timer-unit">s</span>
+          </div>
+        </div>
+        <a href="products.html" class="btn btn-outline" style="background: #2874f0; color: white; border: none;">View All Deals</a>
+      </div>
+      <div id="dod-grid" class="product-grid horizontal-scroll">
+        <!-- populated dynamically -->
+      </div>
+    </section>
+
+
+    <!-- Flash Sale Banner -->
+    <section class="container" style="margin-bottom: 60px;">
+      <div class="flash-sale-banner">
+        <div class="fsb-text">
+          <h2>⚡ Flash Sale Live!</h2>
+          <p>Dynamic AI pricing — catch discounts before they expire.</p>
+        </div>
+        <a href="products.html" class="fsb-cta">Shop All Deals</a>
       </div>
     </section>
 
     <!-- Trending Now -->
-    <section class="container" style="margin-bottom: 40px;">
+    <section class="container" style="margin-bottom: 80px;">
       <div class="section-header">
         <h2 class="section-title">Trending Now 🔥</h2>
-        <a href="products.html" class="text-primary fw-medium text-sm">View All →</a>
+        <a href="products.html" class="section-view-all">View All →</a>
       </div>
-      <div id="trending-grid" class="product-grid">
+      <div id="trending-grid" class="trending-grid">
         <div style="grid-column: 1 / -1; text-align: center; padding: 40px;">
           <span class="spinner spinner-large"></span>
         </div>
@@ -79,7 +214,7 @@
     <!-- Festive Deals -->
     <section id="festive-section" class="container" style="display: none; margin-bottom: 60px;">
       <div class="section-header">
-        <h2 class="section-title">Festive Deals ✨</h2>
+        <h2 class="section-title">Festive Highlights ✨</h2>
       </div>
       <div id="festive-grid" class="product-grid">
         <!-- populated dynamically -->
@@ -87,11 +222,19 @@
     </section>
   </main>
 
+
+
   <!-- Toast Notification Container -->
   <div id="toast-container" class="toast-container"></div>
 
   <script src="js/api.js"></script>
   <script src="js/auth.js"></script>
+  <script>
+    // ── Auth Guard ── redirect to login if not logged in
+    if (!localStorage.getItem('token')) {
+      window.location.replace('login.html');
+    }
+  </script>
   <script>
     // Navbar auth state
     if (isLoggedIn()) {
@@ -102,91 +245,233 @@
 
     // Common card renderer function
     function createProductCardHTML(product) {
-      // Handle missing image
-      const imageUrl = product.image_url || 'https://placehold.co/400x400/F5F6F8/9CA3AF?text=No+Image';
+      // Handle missing image with realistic unsplash images
+      let imageUrl = product.image_url;
+      if (!imageUrl || imageUrl.includes('placehold')) {
+        const cat = (product.category || '').toLowerCase();
+        if (cat.includes('laptop') || cat.includes('electronic')) {
+           imageUrl = 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80';
+        } else if (cat.includes('phone') || cat.includes('mobile')) {
+           imageUrl = 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80';
+        } else {
+           // generic aesthetic product image
+           imageUrl = 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80';
+        }
+      }
       
       // Calculate star rating UI
+      // Price dynamic calculation
+      const base = product.base_price || product.current_price;
+      const current = product.current_price;
       const rating = product.rating || 0;
-      const reviews = product.review_count || 0;
-      
-      // badges
-      let badgeHtml = '';
-      if (product.season === 'Festive') {
-        badgeHtml = `<div class="badge badge-warning" style="position:absolute; top:12px; left:12px; z-index:2;">✨ Festive</div>`;
-      } else {
-        const tierClass = product.segment === 'Premium' ? 'badge-primary' : (product.segment === 'Budget' ? 'badge-success' : 'badge-info');
-        badgeHtml = `<div class="badge ${tierClass}" style="position:absolute; top:12px; left:12px; z-index:2;">${product.segment}</div>`;
+      const reviews = product.review_count || product.reviews || 0;
+
+      let badgeClass = 'hpc-badge-info';
+      let badgeLabel = product.sub_category || 'Product';
+      let dynamicText = '⚖️ Price Remains Same';
+      let dynamicColor = '#64748b';
+
+      if (current > base) {
+        badgeClass = 'hpc-badge-danger';
+        badgeLabel = '📈 High Demand';
+        dynamicText = '📈 Price will be high soon!';
+        dynamicColor = '#f87171';
+      } else if (current < base) {
+        const dropPct = Math.round(((base - current) / base) * 100);
+        badgeClass = 'hpc-badge-success';
+        badgeLabel = '📉 Price Dropped';
+        dynamicText = `📉 Price dropped by ${dropPct}%`;
+        dynamicColor = '#34d399';
+      } else if (product.season === 'Festive') {
+        badgeClass = 'hpc-badge-warning';
+        badgeLabel = '✨ Festive';
       }
 
-      // Add to cart function string (assuming cart array or backend call)
-      const addToCartFn = `addToCart(${product.id})`;
+      const stars = '★'.repeat(Math.round(rating)) + '☆'.repeat(5 - Math.round(rating));
 
       return `
-        <div class="card card-hover product-card">
-          ${badgeHtml}
-          <div class="image-area">
-            <a href="product-detail.html?id=${product.id}"><img src="${imageUrl}" alt="${product.name}" loading="lazy"></a>
-            <button class="btn-icon wishlist-btn-pos" title="Save to wishlist">♡</button>
+        <div class="home-product-card">
+          <div class="hpc-image-wrap">
+            <img class="hpc-image" src="${imageUrl}" alt="${product.name}" loading="lazy">
+            <div class="hpc-badge ${badgeClass}">${badgeLabel}</div>
+            <button class="hpc-wishlist" title="Wishlist">♡</button>
           </div>
-          
-          <div class="price-row">
-            <span class="price">₹${product.current_price.toLocaleString()}</span>
-            ${product.original_price > product.current_price ? `<span class="old-price">₹${product.original_price.toLocaleString()}</span>` : ''}
-          </div>
-          
-          <div class="rating-row">
-            ★ ${rating.toFixed(1)} <span class="text-muted" style="font-weight:400; margin-left:4px;">(${reviews})</span>
-          </div>
-          
-          <a href="product-detail.html?id=${product.id}">
-            <h3 class="product-name">${product.name}</h3>
-          </a>
-          
-          <div class="card-actions">
-            <button class="btn btn-primary" onclick="${addToCartFn}">🛒 Add to cart</button>
+          <div class="hpc-body">
+            <a href="product-detail.html?id=${product.id}" style="text-decoration:none;">
+              <div class="hpc-name">${product.name}</div>
+            </a>
+            <div class="hpc-price-row">
+              <span class="hpc-price">₹${current.toLocaleString()}</span>
+              ${(base > current) ? `<span class="hpc-old-price">₹${base.toLocaleString()}</span>` : ''}
+            </div>
+            <div class="hpc-dynamic-tag" style="color:${dynamicColor}">⚡ ${dynamicText}</div>
+            <div class="hpc-rating">${stars} <span>(${reviews})</span></div>
+            <button class="hpc-btn" onclick="addToCart(${product.id}, this)">🛒 Add to Cart</button>
           </div>
         </div>
       `;
     }
 
-    async function loadHomePageProducts() {
-      // We need to fetch all products to sort out trending and festive
-      // Since API doesn't specify sorting via GET by default based on spec (only said fetch GET /products), we'll do client-side sorting for Trending.
+    // --- Carousel Logic ---
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('.carousel-slide');
+    const dots = document.querySelectorAll('.carousel-dots .dot');
+    
+    function updateCarousel() {
+      slides.forEach((s, i) => s.classList.toggle('active', i === currentSlide));
+      dots.forEach((d, i) => d.classList.toggle('active', i === currentSlide));
+      const container = document.getElementById('main-carousel');
+      if (container) {
+        container.style.transform = `translateX(-${currentSlide * 100}%)`;
+      }
+    }
+    
+    window.moveCarousel = (dir) => {
+      currentSlide = (currentSlide + dir + slides.length) % slides.length;
+      updateCarousel();
+    };
+    
+    window.setCarousel = (index) => {
+      currentSlide = index;
+      updateCarousel();
+    };
+
+    // Auto-advance carousel
+    setInterval(() => { moveCarousel(1); }, 4000);
+
+    // --- Countdown Timer Logic ---
+    function startCountdown() {
+      let hours = 5;
+      let minutes = 23;
+      let seconds = 10;
       
+      setInterval(() => {
+        if(seconds > 0) seconds--;
+        else {
+          seconds = 59;
+          if(minutes > 0) minutes--;
+          else { minutes = 59; hours--; }
+        }
+        
+        document.getElementById('timer-h').innerText = hours.toString().padStart(2, '0');
+        document.getElementById('timer-m').innerText = minutes.toString().padStart(2, '0');
+        document.getElementById('timer-s').innerText = seconds.toString().padStart(2, '0');
+      }, 1000);
+    }
+
+    async function loadHomePageProducts() {
       const res = await apiGetProducts();
       
       if (!res.success) {
-        document.getElementById('trending-grid').innerHTML = '<p class="text-danger">Failed to load products. Backend might be down.</p>';
+        document.getElementById('trending-grid').innerHTML = '<p class="text-danger">Failed to load products.</p>';
         return;
       }
 
       let allProducts = res.data;
       if (typeof allProducts === 'object' && allProducts.data) {
-          allProducts = allProducts.data; // Handle pagination wrapper if exists
+          allProducts = allProducts.data;
       }
-      
-      if (!Array.isArray(allProducts)) {
-        allProducts = [];
+      if (!Array.isArray(allProducts)) allProducts = [];
+
+      // Deal of the Day (randomly select 5 products that are on discount)
+      const discounted = allProducts.filter(p => p.base_price > p.current_price).slice(0, 5);
+      const dodGrid = document.getElementById('dod-grid');
+      if(dodGrid && discounted.length > 0) {
+        dodGrid.innerHTML = '';
+        discounted.forEach(p => dodGrid.innerHTML += createProductCardHTML(p));
+      } else if (dodGrid) {
+        // Fallback if no discounts
+        dodGrid.innerHTML = '';
+        allProducts.slice(0, 5).forEach(p => dodGrid.innerHTML += createProductCardHTML(p));
       }
 
-      // Trending: Top 8 by demand_multiplier or rating or just first 8
-      // Let's sort by demand_multiplier descending if exists, else fallback to something else
-      const trending = [...allProducts].sort((a, b) => (b.demand_multiplier || 0) - (a.demand_multiplier || 0)).slice(0, 8);
-      
+      // Trending — use high-quality tc-* card style
+      const trending = [...allProducts].sort((a, b) => (b.demand || 0) - (a.demand || 0)).slice(0, 8);
       const trendingGrid = document.getElementById('trending-grid');
-      trendingGrid.innerHTML = '';
-      trending.forEach(p => {
-        trendingGrid.innerHTML += createProductCardHTML(p);
-      });
+      if(trendingGrid) {
+        trendingGrid.innerHTML = '';
+        trending.forEach(p => {
+          let imgUrl = p.image_url;
+          if (!imgUrl || imgUrl.includes('placehold')) {
+            const cat = (p.category || '').toLowerCase();
+            if (cat.includes('laptop') || cat.includes('electron')) {
+              imgUrl = 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=700&q=80';
+            } else if (cat.includes('phone') || cat.includes('mobile')) {
+              imgUrl = 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=700&q=80';
+            } else if (cat.includes('watch')) {
+              imgUrl = 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=700&q=80';
+            } else if (cat.includes('audio') || cat.includes('earphone') || cat.includes('headphone')) {
+              imgUrl = 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=700&q=80';
+            } else if (cat.includes('tv') || cat.includes('television')) {
+              imgUrl = 'https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?auto=format&fit=crop&w=700&q=80';
+            } else {
+              imgUrl = 'https://images.unsplash.com/photo-1468495244123-6c6c332eeece?auto=format&fit=crop&w=700&q=80';
+            }
+          }
+
+          const base = p.base_price || p.current_price;
+          const cur = p.current_price;
+          const rating = p.rating || 0;
+          const reviews = p.review_count || p.reviews || 0;
+
+          let dText = '⚖️ Stable Price';
+          let dColor = '#64748b';
+          let badgeLabel = p.sub_category || '';
+          let badgeCls = 'hpc-badge-info';
+          let discountPct = '';
+
+          if (cur > base) {
+            dText = '📈 Price will rise soon!';
+            dColor = '#f87171';
+            badgeLabel = '📈 High Demand';
+            badgeCls = 'hpc-badge-danger';
+          } else if (cur < base) {
+            const pct = Math.round(((base - cur) / base) * 100);
+            dText = `📉 Price dropped by ${pct}%`;
+            dColor = '#34d399';
+            badgeLabel = '📉 Deal!';
+            badgeCls = 'hpc-badge-success';
+            discountPct = `<span class="tc-discount-pct">-${pct}%</span>`;
+          }
+
+          const stars = '★'.repeat(Math.round(rating)) + '☆'.repeat(5 - Math.round(rating));
+
+          trendingGrid.innerHTML += `
+            <div class="trending-card">
+              <div class="tc-image-wrap">
+                <img class="tc-image" src="${imgUrl}" alt="${p.name}" loading="lazy">
+                <div class="tc-overlay"></div>
+                <div class="hpc-badge ${badgeCls}" style="position:absolute; top:12px; left:12px; z-index:5; padding:4px 10px; border-radius:20px; font-size:11px; font-weight:700;">${badgeLabel}</div>
+                <button class="hpc-wishlist" style="position:absolute; top:12px; right:12px; z-index:5;">♡</button>
+              </div>
+              <div class="tc-body">
+                <a href="product-detail.html?id=${p.id}" style="text-decoration:none;">
+                  <div class="tc-name">${p.name}</div>
+                </a>
+                <div class="tc-price-row">
+                  <span class="tc-price">₹${cur.toLocaleString()}</span>
+                  ${(base > cur) ? `<span class="tc-old-price">₹${base.toLocaleString()}</span>` : ''}
+                  ${discountPct}
+                </div>
+                <div class="tc-dynamic-tag" style="color:${dColor}; font-size:11px; font-weight:700; margin-bottom:10px;">⚡ ${dText}</div>
+                <div class="tc-rating">${stars} <span>(${reviews} reviews)</span></div>
+                <div class="tc-actions">
+                  <button class="tc-btn-cart" onclick="addToCart(${p.id}, this)">🛒 Add to Cart</button>
+                  <a class="tc-btn-detail" href="product-detail.html?id=${p.id}">👁</a>
+                </div>
+              </div>
+            </div>
+          `;
+        });
+      }
 
       // Festive
-      const festive = allProducts.filter(p => p.season === 'Festive').slice(0, 4);
+      const festive = allProducts.filter(p => p.season === 'Festive').slice(0, 5);
       if (festive.length > 0) {
         document.getElementById('festive-section').style.display = 'block';
         const festiveGrid = document.getElementById('festive-grid');
-        festive.forEach(p => {
-          festiveGrid.innerHTML += createProductCardHTML(p);
-        });
+        festiveGrid.innerHTML = '';
+        festive.forEach(p => festiveGrid.innerHTML += createProductCardHTML(p));
       }
     }
 
@@ -206,26 +491,42 @@
       }, 3000);
     }
 
-    // Add to cart placeholder for index (since it lacks full cart.js linkage here)
-    window.addToCart = async function(id) {
+    window.addToCart = async function(id, btnElement = null) {
       if (!isLoggedIn()) {
         showToast('Please login to add to cart', 'error');
         setTimeout(() => { window.location.href = 'login.html'; }, 1500);
         return;
       }
       
+      if(btnElement) {
+        btnElement.innerHTML = '⏳ Adding...';
+        btnElement.disabled = true;
+      }
+
       const res = await apiAddToCart(id, 1);
+      
       if (res.success) {
         showToast('Added to cart successfully!');
-        // Update cart badge if backend returns new cart or just fake increment
         const badge = document.getElementById('cart-badge-count');
         badge.innerText = parseInt(badge.innerText) + 1;
+        if(btnElement) {
+          btnElement.innerHTML = '✓ Added';
+          btnElement.classList.add('btn-success');
+          setTimeout(() => {
+            btnElement.innerHTML = '🛒 Add to cart';
+            btnElement.classList.remove('btn-success');
+            btnElement.disabled = false;
+          }, 2000);
+        }
       } else {
         showToast(res.error, 'error');
+        if(btnElement) {
+          btnElement.innerHTML = '🛒 Add to cart';
+          btnElement.disabled = false;
+        }
       }
     }
 
-    // Load cart count if logged in
     async function loadCartCount() {
       if (isLoggedIn()) {
         const res = await apiGetCart();
@@ -236,10 +537,10 @@
       }
     }
 
-    // Init
     document.addEventListener('DOMContentLoaded', () => {
       loadHomePageProducts();
       loadCartCount();
+      startCountdown();
     });
   </script>
 </body>
