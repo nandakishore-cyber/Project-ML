@@ -249,7 +249,19 @@ window.applyPredictedPrice = async () => {
   if (!productId) { showToast('Select a product to apply the price to', 'error'); return; }
   if (!_lastPredictedPrice) { showToast('Run the simulator first to get a prediction', 'error'); return; }
 
-  const res = await apiAdminUpdateProduct(productId, { current_price: _lastPredictedPrice });
+  // Send ALL simulator parameters + the optimized price so the DB fully reflects what was simulated
+  const updatePayload = {
+    current_price:    _lastPredictedPrice,
+    base_price:       parseFloat(document.getElementById('sim-base-price').value),
+    competitor_price: parseFloat(document.getElementById('sim-competitor-price').value),
+    demand:           parseInt(document.getElementById('sim-demand').value),
+    stock:            parseInt(document.getElementById('sim-stock').value),
+    rating:           parseFloat(document.getElementById('sim-rating').value),
+    reviews:          parseInt(document.getElementById('sim-reviews').value),
+    discount:         parseFloat(document.getElementById('sim-discount').value),
+  };
+
+  const res = await apiAdminUpdateProduct(productId, updatePayload);
   if (res.success) {
     showToast(`✅ ₹${_lastPredictedPrice.toLocaleString()} applied to product #${productId} and saved!`);
   } else {
